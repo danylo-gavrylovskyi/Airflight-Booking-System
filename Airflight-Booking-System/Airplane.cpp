@@ -38,3 +38,16 @@ void Airplane::SetFlightNumber(string flight_number) {
 void Airplane::SetNumOfSeatsPerRow(int num_of_seats_per_row) {
 	this->num_of_seats_per_row = num_of_seats_per_row;
 }
+
+vector<Seat> Airplane::GetSeats() const {
+	return this->seats;
+}
+string Airplane::GetDate() const {
+	return this->date;
+}
+string Airplane::GetFlightNumber() const {
+	return this->flight_number;
+}
+int Airplane::GetNumOfSeatsPerRow() const {
+	return this->num_of_seats_per_row;
+}
