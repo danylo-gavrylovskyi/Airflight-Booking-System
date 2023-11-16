@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-
 #include "Airplane.h"
 
 using namespace std;
@@ -26,6 +25,13 @@ Airplane::Airplane(Airplane&& another) {
 	another.seats = {};
 }
 
+void Airplane::operator = (const Airplane& another) {
+	this->date = another.date;
+	this->flight_number = another.flight_number;
+	this->num_of_seats_per_row = another.num_of_seats_per_row;
+	this->seats = another.seats;
+}
+
 void Airplane::SetSeats(vector<Seat> seats) {
 	this->seats = seats;
 }
@@ -37,6 +43,10 @@ void Airplane::SetFlightNumber(string flight_number) {
 }
 void Airplane::SetNumOfSeatsPerRow(int num_of_seats_per_row) {
 	this->num_of_seats_per_row = num_of_seats_per_row;
+}
+
+void Airplane::AddTicket(Ticket ticket) {
+	this->tickets.push_back(ticket);
 }
 
 vector<Seat> Airplane::GetSeats() const {
