@@ -2,7 +2,7 @@
 #include "CLI.h"
 using namespace std;
 
-void CLI::run(vector<Airplane>& airflights) {
+void CLI::run(vector<Airplane>& airflights, vector<Ticket>& tickets) {
 	while (true) {
 		int choice;
 		cout << "\n\nChoose the command\n";
@@ -11,7 +11,7 @@ void CLI::run(vector<Airplane>& airflights) {
 		cout << "\t2. Buy a ticket for the flight\n";
 		cout << "\t3. Return ticket with refund\n";
 		cout << "\t4. View the booking confirmation info\n";
-		cout << "\t5. Check available places for the flight\n";
+		cout << "\t5. View all booked tickets for a particular user\n>> ";
 		cin >> choice;
 
 		if (choice == 0) break;
@@ -19,21 +19,24 @@ void CLI::run(vector<Airplane>& airflights) {
 		switch (choice)
 		{
 		case 1: {
-			checkAvailablePlaces(airflights);
+			checkAvailablePlaces(airflights, tickets);
 			break;
 		}
 		case 2: {
-			buyTicket(airflights);
+			buyTicket(airflights, tickets);
 			break;
 		}
 		case 3: {
-
+			returnTicket(airflights, tickets);
+			break;
 		}
 		case 4: {
-
+			viewBookingInfo(airflights, tickets);
+			break;
 		}
 		case 5: {
-
+			viewUserTickets(airflights, tickets);
+			break;
 		}
 		default:
 			break;
@@ -41,7 +44,7 @@ void CLI::run(vector<Airplane>& airflights) {
 	}
 }
 
-void CLI::checkAvailablePlaces(vector<Airplane>& airflights) {
+void CLI::checkAvailablePlaces(vector<Airplane>& airflights, vector<Ticket>& tickets) {
 	string date;
 	string flight_number;
 	cout << "Enter flight date: ";
@@ -58,7 +61,13 @@ void CLI::checkAvailablePlaces(vector<Airplane>& airflights) {
 		Airplane foundAirplane = *it;
 		cout << "List of free spaces:\n";
 		for (Seat seat : foundAirplane.GetSeats()) {
-			cout << seat.GetId() << ' ' << seat.GetPrice() << "$, ";
+			string seatId = seat.GetId();
+			auto itTicket = std::find_if(tickets.begin(), tickets.end(),
+				[seatId](const Ticket& ticket) {
+					return ticket.getSeat().GetId() == seatId;
+				});
+
+			if (itTicket == tickets.end()) cout << seat.GetId() << ' ' << seat.GetPrice() << "$, ";
 		}
 	}
 	else {
@@ -66,7 +75,7 @@ void CLI::checkAvailablePlaces(vector<Airplane>& airflights) {
 	}
 }
 
-void CLI::buyTicket(vector<Airplane>& airflights) {
+void CLI::buyTicket(vector<Airplane>& airflights, vector<Ticket>& tickets) {
 	string date;
 	string flight_number;
 	string place;
@@ -97,14 +106,8 @@ void CLI::buyTicket(vector<Airplane>& airflights) {
 		if (itSeat != seats.end()) {
 			Seat foundSeat = *itSeat;
 
-			unique_ptr<Ticket> ticket(new Ticket(username, foundSeat));
-			foundAirplane.AddTicket(*ticket);
-
-			auto itDeleteSeat = remove_if(seats.begin(), seats.end(), [place](const Seat& seat) {
-				return seat.GetId() == place;
-				});
-
-			foundAirplane.SetSeats(seats);
+			unique_ptr<Ticket> ticket(new Ticket(username, foundSeat, foundAirplane.GetFlightNumber(), foundAirplane.GetDate()));
+			tickets.push_back(*ticket);
 
 			airflights[it - airflights.begin()] = foundAirplane;
 
@@ -116,5 +119,58 @@ void CLI::buyTicket(vector<Airplane>& airflights) {
 	}
 	else {
 		std::cout << "Airplane with such data not found." << endl;
+	}
+}
+
+void CLI::returnTicket(vector<Airplane>& airflights, vector<Ticket>& tickets) {
+	int booking_id;
+	cout << "Enter booking ID: ";
+	cin >> booking_id;
+
+	auto it = std::find_if(tickets.begin(), tickets.end(),
+		[booking_id](const Ticket& ticket) {
+			return ticket.GetId() == booking_id;
+		});
+
+	if (it != tickets.end()) {
+		Ticket foundTicket = *it;
+		foundTicket.SetBookingStatus("Refund");
+		tickets[it - tickets.begin()] = foundTicket;
+		cout << "Confirmed " << foundTicket.getSeat().GetPrice() << " refund for " << foundTicket.getPassengerName();
+	}
+	else {
+		std::cout << "Booking ticket not found." << endl;
+	}
+}
+
+void CLI::viewBookingInfo(vector<Airplane>& airflights, vector<Ticket>& tickets) {
+	int booking_id;
+	cout << "Enter booking ID: ";
+	cin >> booking_id;
+
+	auto it = std::find_if(tickets.begin(), tickets.end(),
+		[booking_id](const Ticket& ticket) {
+			return ticket.GetId() == booking_id;
+		});
+
+	if (it != tickets.end()) {
+		Ticket foundTicket = *it;
+		cout << "Flight " << foundTicket.getFlightNumber() << ", " << foundTicket.getFlightDate() << ", seat " << foundTicket.getSeat().GetId() << ", price " << foundTicket.getSeat().GetPrice() << "$, " << foundTicket.getPassengerName();
+		cout << endl << foundTicket.GetBookingStatus();
+	}
+	else {
+		std::cout << "Booking ticket not found." << endl;
+	}
+}
+
+void CLI::viewUserTickets(vector<Airplane>& airflights, vector<Ticket>& tickets) {
+	string username;
+	cout << "Enter username to view booked tickets: ";
+	cin >> username;
+
+	for (Ticket ticket : tickets) {
+		if (ticket.getPassengerName() != username) continue;
+		cout << "Flight " << ticket.getFlightNumber() << ", " << ticket.getFlightDate() << ", seat " << ticket.getSeat().GetId() << ", price " << ticket.getSeat().GetPrice() << "$, " << ticket.getPassengerName();
+		cout << endl << ticket.GetBookingStatus();
 	}
 }

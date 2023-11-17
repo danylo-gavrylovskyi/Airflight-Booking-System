@@ -2,12 +2,15 @@
 #include "Airplane.h"
 
 class ICLI {
-	virtual void run(vector<Airplane>& airflights) = 0;
+	virtual void run(vector<Airplane>& airflights, vector<Ticket>& tickets) = 0;
 };
 
 class CLI : public ICLI {
-	void checkAvailablePlaces(vector<Airplane>& airflights);
-	void buyTicket(vector<Airplane>& airflights);
+	void checkAvailablePlaces(vector<Airplane>& airflights, vector<Ticket>& tickets);
+	void buyTicket(vector<Airplane>& airflights, vector<Ticket>& tickets);
+	void returnTicket(vector<Airplane>& airflights, vector<Ticket>& tickets);
+	void viewBookingInfo(vector<Airplane>& airflights, vector<Ticket>& tickets);
+	void viewUserTickets(vector<Airplane>& airflights, vector<Ticket>& tickets);
 public:
-	void run(vector<Airplane>& airflights) override;
+	void run(vector<Airplane>& airflights, vector<Ticket>& tickets) override;
 };

@@ -45,10 +45,6 @@ void Airplane::SetNumOfSeatsPerRow(int num_of_seats_per_row) {
 	this->num_of_seats_per_row = num_of_seats_per_row;
 }
 
-void Airplane::AddTicket(Ticket ticket) {
-	this->tickets.push_back(ticket);
-}
-
 vector<Seat> Airplane::GetSeats() const {
 	return this->seats;
 }
