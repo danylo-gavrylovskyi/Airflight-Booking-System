@@ -3,11 +3,10 @@
 #include <string>
 #include <vector>
 #include "Seat.h"
-#include "Ticket.h"
 using namespace std;
 
 class IAirplane {
-	virtual void SetSeats(vector<Seat> seats) = 0;
+	virtual void SetSeats(vector<Seat>& seats) = 0;
 	virtual void SetDate(string date) = 0;
 	virtual void SetFlightNumber(string flight_number) = 0;
 	virtual void SetNumOfSeatsPerRow(int num_of_seats_per_row) = 0;
@@ -29,8 +28,9 @@ public:
 	Airplane(Airplane&& another);
 
 	void operator=(const Airplane& another);
+	void operator = (Airplane&& another);
 
-	void SetSeats(vector<Seat> seats) override;
+	void SetSeats(vector<Seat>& seats) override;
 	void SetDate(string date) override;
 	void SetFlightNumber(string flight_number) override;
 	void SetNumOfSeatsPerRow(int num_of_seats_per_row) override;

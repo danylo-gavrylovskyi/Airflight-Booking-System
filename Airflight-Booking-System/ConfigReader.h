@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include "Airplane.h"
 using namespace std;
@@ -10,7 +12,7 @@ class IConfigReader {
 
 class ConfigReader: public IConfigReader {
 	string config = "";
-	vector<std::string> split(string text, char delimeter);
+	vector<std::string> split(const string& text, char delimeter);
 public:
 	void loadConfig(const char* fileName) override;
 	void readConfig(vector<Airplane>& airflight) override;

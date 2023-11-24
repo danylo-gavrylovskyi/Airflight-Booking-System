@@ -66,14 +66,14 @@ string ConfigReader::GetConfig() {
     return this->config;
 }
 
-vector<string> ConfigReader::split(string text, char delimeter) {
+vector<string> ConfigReader::split(const string& text, char delimeter) {
     istringstream iss(text);
 
-    vector<string> lines;
+    vector<string> lines = {};
 
     string line;
     while (getline(iss, line, delimeter)) {
-        lines.push_back(line);
+        lines.push_back(move(line));
     }
 
     return lines;

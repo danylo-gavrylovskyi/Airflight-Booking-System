@@ -109,7 +109,7 @@ void CLI::buyTicket(vector<Airplane>& airflights, vector<Ticket>& tickets) {
 			unique_ptr<Ticket> ticket(new Ticket(username, foundSeat, foundAirplane.GetFlightNumber(), foundAirplane.GetDate()));
 			tickets.push_back(*ticket);
 
-			airflights[it - airflights.begin()] = foundAirplane;
+			airflights[it - airflights.begin()] = move(foundAirplane);
 
 			cout << "Confirmed with ID " << ticket->GetId();
 		}
@@ -170,7 +170,7 @@ void CLI::viewUserTickets(vector<Airplane>& airflights, vector<Ticket>& tickets)
 
 	for (Ticket ticket : tickets) {
 		if (ticket.getPassengerName() != username) continue;
-		cout << "Flight " << ticket.getFlightNumber() << ", " << ticket.getFlightDate() << ", seat " << ticket.getSeat().GetId() << ", price " << ticket.getSeat().GetPrice() << "$, " << ticket.getPassengerName();
+		cout << ticket.GetId() << ". Flight " << ticket.getFlightNumber() << ", " << ticket.getFlightDate() << ", seat " << ticket.getSeat().GetId() << ", price " << ticket.getSeat().GetPrice() << "$, " << ticket.getPassengerName();
 		cout << endl << ticket.GetBookingStatus();
 	}
 }
